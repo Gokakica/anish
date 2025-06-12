@@ -1,0 +1,318 @@
+/* General Reset and Body */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+h1 {
+  background-color: #333;
+  color: #f8f7f7;
+  font-family: 'Segoe UI', sans-serif;
+
+}
+
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #444;
+  padding: 10px 20px;
+  flex-wrap: wrap;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.nav-left img {
+  height: 40px;
+  margin-right: 20px;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li {
+  margin: 0 15px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+/* Single Logout Style */
+.logout {
+  background-color: #f2f2f2;
+ 
+  color: rgb(22, 3, 3);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Main Content */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* centers horizontally */
+  justify-content: center; /* optional: centers vertically if container has height */
+  text-align: center;
+  padding: 30px;
+  background: #f2f2f2;
+}
+
+
+/* Add Menu Form */
+.menu-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.menu-form {
+  margin: 20px 0;
+}
+
+.menu-form input,
+.menu-form button {
+  padding: 8px 10px;
+  font-size: 16px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.menu-form button {
+  background-color: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-form button:hover {
+  background-color: #666;
+}
+
+/* Horizontal Menu Display */
+.horizontal-menu {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.horizontal-menu li {
+  background-color: #eee;
+  padding: 10px 15px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.horizontal-menu a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Delete Button for Menu Items */
+.delete-btn {
+  background-color: crimson;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  line-height: 18px;
+  font-size: 14px;
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+/* Logout Section Below Menu */
+.logout-section {
+  margin-top: 30px;
+}
+
+/* Footer */
+.footer {
+  background-color: #333;
+  color: white;
+  font-size: 14px;
+  padding: 20px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.footer-section {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.footer-section h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 6px;
+}
+
+.footer-section ul li a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.footer-section ul li a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 10px;
+  width: 100%;
+}
+
+/* Login Box (if used) */
+.login-box {
+  background: white;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login-box button {
+  width: 95%;
+  padding: 10px;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-box .error {
+  color: red;
+  margin-bottom: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-container {
+    max-width: 300px;
+    padding: 0 10px;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .navbar li {
+    margin: 10px 0;
+  }
+
+  .logout {
+    align-self: flex-end;
+    margin-top: 90px;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .footer-section {
+    margin: 15px 0;
+  }
+}
+.sidebar {
+  width: 220px;
+  background-color: #1f1f1f;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 60px;
+  color: white;
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  padding: 15px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #333;
+}
+
+.main-content {
+  margin-left: 220px;
+  padding: 20px;
+}
