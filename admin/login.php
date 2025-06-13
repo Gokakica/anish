@@ -27,9 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user['password'])) {
             $_SESSION['loggedin'] = true;
             $_SESSION['email'] = $email;
+            $_SESSION['id'] = $user['id'];  // ✅ Add this line
             header("Location: home.php");
             exit;
-        } else {
+        }
+        else {
             $loginError = "Invalid email or password.";
         }
     } else {

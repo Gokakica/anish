@@ -32,7 +32,13 @@
         <li><a href="#">Contact</a></li>
     </ul>
     <div class="profile">
-        <img src="../images/profile.png" alt="Profile" class="icon">
+    <?php
+$profileImg = glob("../uploads/profile.*");
+$profileSrc = count($profileImg) ? $profileImg[0] . "?v=" . time() : "../images/default.png";
+?>
+<img src="<?php echo $profileSrc; ?>" alt="Profile">
+
+
     </div>
 
 
