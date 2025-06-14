@@ -4,8 +4,9 @@ include("db.php");
 $registerMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Encrypt password
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // ✅ This is $password
 
     // Check if email already exists
     $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
@@ -16,12 +17,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($result->num_rows > 0) {
         $registerMessage = "❌ Email already registered!";
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-        $stmt->bind_param("ss", $email, $password);
+        $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $name, $email, $password); // ✅ This now matches
         $stmt->execute();
         $registerMessage = "✅ User registered successfully!";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -39,6 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <p><?php echo $registerMessage; ?></p>
     <?php endif; ?>
     <form method="POST">
+        
+    <input type="text" name="name" placeholder="Full Name" required>
+
         <input type="email" name="email" required placeholder="Email"><br><br>
         <input type="password" name="password" required placeholder="Password"><br><br>
         <button type="submit">Register</button>

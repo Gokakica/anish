@@ -388,3 +388,18 @@ h1 {
 .dropdown-menu a:hover {
   background-color: #f1f1f1;
 }
+
+
+.back-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  margin: 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.back-button:hover {
+  background-color: #222;
+}

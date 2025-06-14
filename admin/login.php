@@ -10,35 +10,54 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 $loginError = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    // 🔍 Fetch user from DB
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND name = ?");
+    if ($stmt) {
+        $stmt->bind_param("ss", $email, $name);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // ✅ Check if user exists
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        
-        // 🔒 Verify password
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['loggedin'] = true;
-            $_SESSION['email'] = $email;
-            $_SESSION['id'] = $user['id'];  // ✅ Add this line
-            header("Location: home.php");
-            exit;
-        }
-        else {
-            $loginError = "Invalid email or password.";
+        if ($result && $result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['loggedin'] = true;
+                $_SESSION['email'] = $email;
+                $_SESSION['id'] = $user['id'];
+                $_SESSION['name'] = $user['name'];
+            
+                // Update login time and login count
+                $update = $conn->prepare("UPDATE users SET login_time = NOW(), login_count = login_count + 1 WHERE email = ?");
+                $update->bind_param("s", $email);
+                $update->execute();
+            
+                // Insert into login_history table
+                $insertHistory = $conn->prepare("INSERT INTO login_history (user_id) VALUES (?)");
+                $insertHistory->bind_param("i", $user['id']);
+                $insertHistory->execute();
+            
+                header("Location: home.php");
+                exit;
+            }
+            
+            
+             else {
+                $loginError = "Invalid email, name, or password.";
+            }
+        } else {
+            $loginError = "Invalid email, name, or password.";
         }
     } else {
-        $loginError = "Invalid email or password.";
+        $loginError = "Database error.";
     }
 }
+
+
 ?>
+
 
 
 <!DOCTYPE html>
@@ -57,10 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="error"><?php echo $loginError; ?></p>
         <?php endif; ?>
         <form method="POST">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+</form>
+
 
         <p>New user? <a href="register.php">Register Here</a></p>
     </div>

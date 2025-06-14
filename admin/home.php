@@ -32,6 +32,23 @@ while ($row = $result->fetch_assoc()) {
 $defaultLogo = '../images/logo.png';
 $uploadedLogo = '../uploads/logo.png';
 $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defaultLogo;
+
+// Profile image logic from DB
+$defaultProfile = '../images/profile.png';
+$profileImage = $defaultProfile;
+
+if (isset($_SESSION['id'])) {
+    $userId = $_SESSION['id'];
+    $stmt = $conn->prepare("SELECT profile_photo FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if (!empty($user['profile_photo']) && file_exists("../uploads/" . $user['profile_photo'])) {
+        $profileImage = "../uploads/" . $user['profile_photo'] . '?v=' . time();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +60,9 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
         }
 
         .sidebar-toggle {
@@ -60,9 +79,10 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
             position: fixed;
             top: 0;
             left: -220px;
-            transition: 0.3s;
+            transition: 0.3s ease;
             z-index: 1000;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
         }
 
         .sidebar.active {
@@ -72,21 +92,24 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
         .sidebar a {
             display: block;
             color: white;
-            padding: 15px;
+            padding: 15px 20px;
             text-decoration: none;
+            font-size: 15px;
+            transition: background 0.3s ease;
         }
 
         .sidebar a:hover {
-            background-color: #333;
+            background-color: #444;
         }
 
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #2c2c2c;
+            padding: 12px 20px;
             color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .nav-left {
@@ -95,8 +118,8 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
         }
 
         .nav-left img.logo {
-            height: 40px;
-            margin-right: 20px;
+            height: 42px;
+            margin-right: 15px;
         }
 
         .profile img {
@@ -104,41 +127,48 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
             width: 40px;
             border-radius: 50%;
             cursor: pointer;
-        }
-
-        .profile-form {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: white;
-            padding: 10px;
-            border: 1px solid #ccc;
-            z-index: 99;
-        }
-
-        .profile-form input,
-        .profile-form button {
-            margin: 5px 0;
-            font-size: 12px;
+            border: 2px solid #fff;
         }
 
         .main-container {
-            text-align: center;
             padding: 30px;
-            background: #f2f2f2;
             margin-left: 0;
-            transition: margin-left 0.3s;
+            transition: margin-left 0.3s ease;
+            background: #ffffff;
+            min-height: calc(100vh - 60px);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .main-container.shifted {
             margin-left: 220px;
         }
 
-        .menu-form input,
+        .menu-form {
+            margin: 20px auto;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .menu-form input, .menu-form button {
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            transition: all 0.2s ease;
+        }
+
         .menu-form button {
-            padding: 10px;
-            margin: 10px 5px;
+            background-color: crimson;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-form button:hover {
+            background-color: #d32f2f;
         }
 
         .horizontal-menu {
@@ -148,13 +178,20 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
             list-style: none;
             gap: 15px;
             padding: 0;
+            margin: 30px auto;
         }
 
         .horizontal-menu li {
-            background: #eee;
+            background: #f1f1f1;
             padding: 10px 20px;
             border-radius: 8px;
             position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: background 0.3s ease;
+        }
+
+        .horizontal-menu li:hover {
+            background: #e9e9e9;
         }
 
         .horizontal-menu .delete-btn {
@@ -165,53 +202,51 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
             color: white;
             border: none;
             border-radius: 50%;
-            font-weight: bold;
             width: 22px;
             height: 22px;
-            line-height: 18px;
+            font-weight: bold;
             font-size: 14px;
             cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        .logout {
-            margin-top: 30px;
-        }
-
-        .logout a {
-            background-color: crimson;
-            padding: 10px 20px;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-            border: none;
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
         }
 
         footer {
             margin-top: 50px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
         }
     </style>
+
     <script>
-            function toggleProfileForm() {
-                const form = document.getElementById("profileForm");
-                form.style.display = form.style.display === "block" ? "none" : "block";
-            }
+        function toggleProfileForm() {
+            const form = document.getElementById("profileForm");
+            form.style.display = form.style.display === "block" ? "none" : "block";
+        }
 
-            document.addEventListener("click", function(event) {
-                const form = document.getElementById("profileForm");
-                const profile = document.getElementById("profileImage");
-                if (!form.contains(event.target) && !profile.contains(event.target)) {
-                    form.style.display = "none";
-                }
-            });
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const main = document.getElementById("mainContent");
+            sidebar.classList.toggle("active");
+            main.classList.toggle("shifted");
+        }
 
-            function toggleSidebar() {
-                const sidebar = document.getElementById("sidebar");
-                const main = document.getElementById("mainContent");
-                sidebar.classList.toggle("active");
-                main.classList.toggle("shifted");
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.addEventListener('click', function (e) {
+            const dropdown = document.getElementById("dropdown-menu");
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            if (!profileDropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
             }
+        });
     </script>
 </head>
 <body>
@@ -219,7 +254,6 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
 <div class="sidebar" id="sidebar">
     <a href="javascript:void(0)" onclick="toggleSidebar()" style="font-weight: bold; color: crimson;">&larr; Back</a>
     <a href="dashboard.php">Dashboard</a>
-
     <a href="#">Settings</a>
     <a href="#">Reports</a>
 </div>
@@ -231,88 +265,16 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
         <span style="font-size: 18px; font-weight: bold; margin-left: 10px;">Admin Panel</span>
     </div>
     <div class="profile-dropdown" style="display: flex; align-items: center; gap: 10px; position: relative;">
-    <!-- Profile Button (Dropdown Trigger) -->
-    <button onclick="toggleDropdown()" id="profile-toggle" style="padding: 6px 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Profile
-    </button>
+        <button onclick="toggleDropdown()" id="profile-toggle" style="padding: 6px 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">ADMIN</button>
+        <img src="<?php echo $profileImage; ?>" alt="Profile Photo" class="icon" style="cursor: pointer; height: 32px;" onclick="toggleDropdown()">
 
-    <!-- Profile Image (also opens dropdown) -->
-    <?php
-$profileImagePath = '../uploads/profile';
-$profileImageFile = glob($profileImagePath . '.*'); // find profile.jpg or profile.png, etc.
-$profileImage = count($profileImageFile) > 0 ? $profileImageFile[0] . '?v=' . time() : '../images/profile.png';
-?>
-<img src="../uploads/profile.png" alt="Profile Photo" class="icon" style="cursor: pointer; height: 32px;" onclick="toggleDropdown()">
+        <div id="dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 40px; right: 0; background-color: white; border: 1px solid #ccc; border-radius: 5px; z-index: 10; min-width: 180px;">
+            <a href="profile_detail.php">Profile Details</a>
+            <a href="change_password.php">Change Password</a>
+            <a href="profile.php">History</a>
+           
 
-
-
-    <!-- Dropdown Menu -->
-    <div id="dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 40px; right: 0; background-color: white; border: 1px solid #ccc; border-radius: 5px; z-index: 10; min-width: 180px;">
-    <a href="profile_detail.php" style="display: block; padding: 10px; text-decoration: none; color: black;">Profile Details</a>
-    <a href="change_password.php" style="display: block; padding: 10px; text-decoration: none; color: black;">Change Password</a>
-    <a href="profile.php" style="display: block; padding: 10px; text-decoration: none; color: black;">History</a>
-
-    
-    <form id="pfpForm" enctype="multipart/form-data">
-    <input type="file" name="profilePhoto" accept="image/*" required>
-    <button type="submit">Upload PFP</button>
-</form>
-
-<script>
-document.getElementById("pfpForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    fetch("upload.php", {
-        method: "POST",
-        body: formData,
-    })
-    .then(res => res.text())
-    .then(response => {
-        console.log(response); // DEBUG: log the PHP output
-        if (response.includes("✅ Upload successful")) {
-            const profileImg = document.querySelector("img[src*='profile']");
-            profileImg.src = profileImg.src.split('?')[0] + '?v=' + new Date().getTime();
-            alert("Profile picture updated!");
-        } else {
-            alert("Upload error:\n" + response);
-        }
-    })
-    .catch(err => alert("Upload failed. Error: " + err));
-});
-</script>
-
-
-    
-    <a href="logout.php" style="display: block; padding: 10px; text-decoration: none; color: red; border-top: 1px solid #eee;">Logout</a>
-</div>
-
-
-<!-- Dropdown Script -->
-<script>
-    function toggleDropdown() {
-        const menu = document.getElementById('dropdown-menu');
-        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-    }
-
-    window.addEventListener('click', function (e) {
-        const dropdown = document.getElementById("dropdown-menu");
-        const profileDropdown = document.querySelector('.profile-dropdown');
-        if (!profileDropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
-</script>
-
-        <div class="profile-form" id="profileForm">
-        <form action="upload.php" method="POST" enctype="multipart/form-data">
-    <input type="file" name="profilePhoto" accept="image/*" required>
-    <button type="submit" name="uploadPfp">Upload</button>
-</form>
-
-
-            <form action="upload.php" method="post">
-                <button type="submit" name="removeLogo" style="margin-top: 5px;">Remove Logo</button>
-            </form>
+            <a href="logout.php" style="color: red; border-top: 1px solid #eee;">Logout</a>
         </div>
     </div>
 </div>
@@ -336,10 +298,51 @@ document.getElementById("pfpForm").addEventListener("submit", function (e) {
         <?php endforeach; ?>
     </ul>
 
-   
-
-    <h3>Welcome to the Home Page!</h3>
+    <h3>Welcome to the ADMIN PAGE!</h3>
 </div>
+
+<script>
+    document.getElementById("pfpForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("upload.php", {
+            method: "POST",
+            body: formData,
+        })
+        .then(res => res.text())
+        .then(response => {
+            console.log(response);
+            if (response.includes("✅ Upload successful")) {
+    const profileImg = document.querySelector(".profile-dropdown img");
+    profileImg.src = profileImg.src.split('?')[0] + '?v=' + new Date().getTime();
+    alert("Profile picture updated!");
+}
+        })
+        .catch(err => alert("Upload failed. Error: " + err));
+    });
+
+    document.getElementById("cardPhotoForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch("upload.php", {
+        method: "POST",
+        body: formData,
+    })
+    .then(res => res.text())
+    .then(response => {
+        console.log(response);
+        if (response.includes("✅ Card image uploaded")) {
+            alert("Profile Card Photo updated!");
+        } else {
+            alert("Card upload error:\n" + response);
+        }
+    })
+    .catch(err => alert("Upload failed. Error: " + err));
+});
+
+</script>
+
+
 
 <?php include("../includes/footer.php"); ?>
 </body>
