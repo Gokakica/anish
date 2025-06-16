@@ -54,165 +54,225 @@ if (isset($_SESSION['id'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- In <head> -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
     <meta charset="UTF-8">
     <title>Admin Panel Home</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-        }
+:root {
+    --primary-color: #203a43;
+    --dark-color: #0f2027;
+    --highlight-color: #2c5364;
+    --bg-color: #121c24;
+    --card-bg: #1e2a33;
+    --text-color: #ffffff;
+    --muted-text: #dddddd;
+    --border-radius: 12px;
+    --transition-fast: 0.3s ease-in-out;
+  
+}
 
-        .sidebar-toggle {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 10px;
-            color: white;
-        }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
 
-        .sidebar {
-            width: 220px;
-            background-color: #1f1f1f;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -220px;
-            transition: 0.3s ease;
-            z-index: 1000;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-        }
+.sidebar-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    color: var(--text-color);
+}
 
-        .sidebar.active {
-            left: 0;
-        }
+.sidebar {
+    width: 220px;
+    background-color: var(--dark-color);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: -220px;
+    transition: var(--transition-fast);
+    z-index: 1000;
+    padding-top: 60px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
 
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 15px 20px;
-            text-decoration: none;
-            font-size: 15px;
-            transition: background 0.3s ease;
-        }
+.sidebar.active {
+    left: 0;
+}
 
-        .sidebar a:hover {
-            background-color: #444;
-        }
+.sidebar a {
+    display: block;
+    color: var(--muted-text);
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background var(--transition-fast);
+}
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #2c2c2c;
-            padding: 12px 20px;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+.sidebar a:hover {
+    background-color: var(--highlight-color);
+}
 
-        .nav-left {
-            display: flex;
-            align-items: center;
-        }
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--dark-color);
+    padding: 12px 20px;
+    color: var(--text-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
 
-        .nav-left img.logo {
-            height: 42px;
-            margin-right: 15px;
-        }
+.nav-left {
+    display: flex;
+    align-items: center;
+}
 
-        .profile img {
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid #fff;
-        }
+.nav-left img.logo {
+    height: 42px;
+    margin-right: 15px;
+}
 
-        .main-container {
-            padding: 30px;
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-            background: #ffffff;
-            min-height: calc(100vh - 60px);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-        }
+.profile img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+}
 
-        .main-container.shifted {
-            margin-left: 220px;
-        }
+.main-container {
+    padding: 30px;
+    margin-left: 0;
+    transition: margin-left var(--transition-fast);
+    background: var(--bg-color);
+    min-height: calc(100vh - 60px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
 
-        .menu-form {
-            margin: 20px auto;
-            max-width: 600px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+.main-container.shifted {
+    margin-left: 220px;
+}
 
-        .menu-form input, .menu-form button {
-            padding: 10px 15px;
-            font-size: 14px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            transition: all 0.2s ease;
-        }
+.menu-form {
+    margin: 20px auto;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-        .menu-form button {
-            background-color: crimson;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+.menu-form input, .menu-form button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: var(--border-radius);
+    border: 1px solid #444;
+    transition: var(--transition-fast);
+}
 
-        .menu-form button:hover {
-            background-color: #d32f2f;
-        }
+.menu-form input[type="text"] {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
 
-        .horizontal-menu {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            list-style: none;
-            gap: 15px;
-            padding: 0;
-            margin: 30px auto;
-        }
+.menu-form input:focus {
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 5px var(--highlight-color);
+}
 
-        .horizontal-menu li {
-            background: #f1f1f1;
-            padding: 10px 20px;
-            border-radius: 8px;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: background 0.3s ease;
-        }
+.menu-form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
-        .horizontal-menu li:hover {
-            background: #e9e9e9;
-        }
+.menu-form button:hover {
+    background-color: var(--highlight-color);
+}
 
-        .horizontal-menu .delete-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: crimson;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+.horizontal-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 15px;
+    padding: 0;
+    margin: 30px auto;
+}
 
-        .dropdown-menu a:hover {
-            background-color: #f5f5f5;
-        }
+.horizontal-menu li {
+    background: var(--card-bg);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background var(--transition-fast);
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+
+
+.horizontal-menu li:hover {
+    background: var(--highlight-color);
+}
+
+.horizontal-menu .delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: crimson;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.dropdown-menu {
+    background: var(--card-bg);
+    border: 1px solid #333;
+    border-radius: var(--border-radius);
+    color: var(--muted-text);
+    padding: 5px 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: var(--muted-text);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--highlight-color);
+    color: white;
+}
+
+footer {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 14px;
+    color: #ccc;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    padding: 40px 20px 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+
 
         footer {
             margin-top: 50px;

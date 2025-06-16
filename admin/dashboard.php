@@ -1,18 +1,16 @@
 <?php
 session_start();
 include("db.php");
+
 if (isset($_POST['delete_service_id'])) {
     $idToDelete = intval($_POST['delete_service_id']);
     $stmt = $conn->prepare("DELETE FROM services WHERE id = ?");
     $stmt->bind_param("i", $idToDelete);
     $stmt->execute();
-    // Optional: Refresh to prevent resubmission
     header("Location: dashboard.php");
     exit();
 }
 
-
-// Handle service addition
 if (isset($_POST['add_service']) || isset($_POST['addService'])) {
     $service = trim($_POST['service_name'] ?? $_POST['serviceName']);
     if (!empty($service)) {
@@ -22,99 +20,163 @@ if (isset($_POST['add_service']) || isset($_POST['addService'])) {
     }
 }
 
-// Fetch services for "Most Used" section (you can enhance this with actual usage counts later)
 $mostUsed = [];
 $result = $conn->query("SELECT name FROM services ORDER BY id DESC LIMIT 5");
 while ($row = $result->fetch_assoc()) {
     $mostUsed[] = $row['name'];
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f2f2f2; }
-        .container { padding: 30px; }
-        h2 { margin-bottom: 10px; }
-
-        .section {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #eef2f3, #8e9eab);
         }
 
-        .form-inline input, .form-inline button {
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-inline input {
             padding: 10px;
-            margin-right: 10px;
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .form-inline button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .form-inline button:hover {
+            background: #0056b3;
+        }
+
+        .stats-list {
+            list-style: none;
+            padding-left: 0;
         }
 
         .stats-list li {
-            background: #eee;
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 5px;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
         .stats-list form {
-    display: inline;
-}
-.stats-list button {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-.stats-list button:hover {
-    background: #c0392b;
-}
+            display: inline;
+        }
+
+        .stats-list button {
+            background: #e74c3c;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .stats-list button:hover {
+            background: #c0392b;
+        }
 
         canvas {
-            max-width: 100%;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            background: #17a2b8;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: #117a8b;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+<a href="home.php" class="back-button">← Back to Home</a>
+
+
     <div class="section">
-        <h2>Add Services</h2>
+        <h2>Add New Service</h2>
         <form method="POST" class="form-inline">
             <input type="text" name="service_name" placeholder="Enter service name" required>
-            <button type="submit" name="add_service">Add</button>
+            <button type="submit" name="add_service">Add Service</button>
         </form>
     </div>
 
     <div class="section">
-    <h2>Services List</h2>
-    <ul class="stats-list">
-        <?php
-        $services = [];
-        $result = $conn->query("SELECT id, name FROM services");
-        while ($row = $result->fetch_assoc()) {
-            echo '<li>' . htmlspecialchars($row['name']) . '
-                <form method="POST" action="" style="display:inline;">
-                    <input type="hidden" name="delete_service_id" value="' . $row['id'] . '">
-                    <button type="submit" onclick="return confirm(\'Delete this service?\')">Delete</button>
-                </form>
-            </li>';
-        }
-        ?>
-    </ul>
-</div>
-<div class="section">
-    <h2>View Statistics</h2>
-    <canvas id="statsChart" width="400" height="200"></canvas>
-</div>
+        <h2>Services List</h2>
+        <ul class="stats-list">
+            <?php
+            $result = $conn->query("SELECT id, name FROM services");
+            while ($row = $result->fetch_assoc()) {
+                echo '<li>' . htmlspecialchars($row['name']) . '
+                    <form method="POST" action="">
+                        <input type="hidden" name="delete_service_id" value="' . $row['id'] . '">
+                        <button type="submit" onclick="return confirm(\'Delete this service?\')">Delete</button>
+                    </form>
+                </li>';
+            }
+            ?>
+        </ul>
+    </div>
 
+    <div class="section">
+        <h2>Service Usage Stats</h2>
+        <canvas id="statsChart" width="400" height="200"></canvas>
+    </div>
+</div>
 
 <script>
     const ctx = document.getElementById('statsChart').getContext('2d');
@@ -131,7 +193,12 @@ while ($row = $result->fetch_assoc()) {
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
             }
         }
     });

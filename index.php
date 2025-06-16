@@ -27,19 +27,28 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
     <meta charset="UTF-8">
     <title>Client View</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
         }
 
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #1f2937;
+            padding: 15px 30px;
             color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .nav-left {
@@ -48,59 +57,51 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
         }
 
         .nav-left img.logo {
-            height: 40px;
-            margin-right: 20px;
+            height: 50px;
+            margin-right: 25px;
         }
 
         .nav-left ul {
             list-style: none;
             display: flex;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-left li {
-            margin: 0 10px;
+            gap: 20px;
         }
 
         .nav-left a {
             color: white;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            transition: color 0.3s;
         }
 
         .nav-left a:hover {
-            text-decoration: underline;
-        }
-
-        .profile {
-            position: relative;
+            color: #60a5fa;
         }
 
         .profile img {
-            height: 40px;
-            width: 40px;
+            height: 45px;
+            width: 45px;
             border-radius: 50%;
             cursor: pointer;
+            border: 2px solid white;
         }
 
         .sidebar-toggle {
-            font-size: 24px;
+            font-size: 28px;
             background: none;
             border: none;
             color: white;
-            margin-right: 15px;
             cursor: pointer;
+            margin-right: 20px;
         }
 
         .sidebar {
             position: fixed;
             top: 0;
-            left: -250px;
+            left: -240px;
             width: 220px;
             height: 100%;
-            background-color: #1f1f1f;
-            overflow-x: hidden;
+            background-color: #111827;
             transition: 0.3s;
             padding-top: 60px;
             z-index: 1000;
@@ -113,35 +114,42 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
         .sidebar a {
             display: block;
             color: white;
-            padding: 15px;
+            padding: 15px 25px;
             text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
         }
 
         .sidebar a:hover {
-            background-color: #333;
+            background-color: #1f2937;
         }
 
         .main-container {
             text-align: center;
-            padding: 30px;
-            background: #f2f2f2;
+            padding: 50px 20px;
+            background: #ffffff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            margin: 40px auto;
+            width: 90%;
+            border-radius: 16px;
         }
 
-        footer {
-            margin-top: 50px;
+        .main-container h2 {
+            font-size: 32px;
+            color: #111827;
         }
 
-        /* New modern services section */
         .services-section {
-            padding: 40px;
-            background: #f9f9f9;
+            padding: 60px 20px;
+            background: #f0f4f8;
             text-align: center;
         }
 
         .services-title {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 40px;
         }
 
         .services-grid {
@@ -153,31 +161,39 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
 
         .service-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 250px;
-            transition: transform 0.2s ease;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 280px;
+            transition: all 0.3s ease;
         }
 
         .service-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
         }
 
         .service-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: 48px;
+            margin-bottom: 20px;
         }
 
         .service-name {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
         }
 
         .service-description {
-            color: #555;
-            margin-top: 8px;
-            font-size: 14px;
+            color: #6b7280;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding: 30px;
+            text-align: center;
+            color: #6b7280;
         }
     </style>
 
@@ -233,7 +249,7 @@ $logoImage = file_exists($uploadedLogo) ? $uploadedLogo . '?v=' . time() : $defa
     <h2>Welcome to the Client View!</h2>
 </div>
 
-<!-- Modern Services Section -->
+<!-- Services Section -->
 <div class="services-section">
     <div class="services-title">Our Services</div>
     <div class="services-grid">
